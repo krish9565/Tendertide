@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Company Profile{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Company Information</h5>
+                    <p class="card-text">
+                        <strong>Company Name:</strong> {{ current_user.company_name }}<br>
+                        <strong>Email:</strong> {{ current_user.email }}<br>
+                        <strong>Member since:</strong> {{ current_user.created_at.strftime('%Y-%m-%d') }}
+                    </p>
+                    <a href="{{ url_for('create_tender') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create New Tender
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <h4 class="mb-4">Published Tenders</h4>
+            
+            {% if tenders %}
+                {% for tender in tenders %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{{ url_for('tender_detail', tender_id=tender.id) }}">{{ tender.title }}</a>
+                        </h5>
+                        <p class="card-text">{{ tender.description[:200] }}...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-primary">{{ tender.type }}</span>
+                                <span class="badge bg-secondary">{{ tender.category }}</span>
+                            </div>
+                            <small class="text-muted">Deadline: {{ tender.deadline.strftime('%Y-%m-%d') }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info">
+                    You haven't published any tenders yet.
+                    <a href="{{ url_for('create_tender') }}" class="alert-link">Create your first tender</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

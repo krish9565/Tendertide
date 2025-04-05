@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Business News{% endblock %}
+
+{% block content %}
+<style>
+    h1 {
+        color:white;
+    }
+</style>
+<div class="container py-5">
+    <h1 class="mb-4">Business News & Updates</h1>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Featured News -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Government Announces New Infrastructure Development Projects</h5>
+                    <p class="card-text text-muted">February 18, 2025</p>
+                    <p class="card-text">
+                        Major infrastructure development projects worth $10 billion announced, creating numerous opportunities for contractors and suppliers across various sectors.
+                    </p>
+                    <a href="#" class="btn btn-primary">Read More</a>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Digital Transformation in Public Procurement</h5>
+                    <p class="card-text text-muted">February 15, 2025</p>
+                    <p class="card-text">
+                        New initiatives launched to digitalize the public procurement process, making it more efficient and transparent for all stakeholders.
+                    </p>
+                    <a href="#" class="btn btn-primary">Read More</a>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Sustainable Procurement Guidelines Released</h5>
+                    <p class="card-text text-muted">February 10, 2025</p>
+                    <p class="card-text">
+                        Updated guidelines focusing on environmental sustainability and social responsibility in procurement processes have been released.
+                    </p>
+                    <a href="#" class="btn btn-primary">Read More</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Sidebar -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Latest Updates</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <small class="text-muted">Feb 18</small>
+                            <br>New tender opportunities in healthcare sector
+                        </li>
+                        <li class="mb-2">
+                            <small class="text-muted">Feb 17</small>
+                            <br>Technology procurement webinar announced
+                        </li>
+                        <li class="mb-2">
+                            <small class="text-muted">Feb 16</small>
+                            <br>Updates to e-procurement platform
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

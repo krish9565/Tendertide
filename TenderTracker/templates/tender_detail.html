@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tender.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'tenders:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'tenders:tender_list' %}">Tenders</a></li>
+            <li class="breadcrumb-item active">{{ tender.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <h2 class="card-title">{{ tender.title }}</h2>
+                {% if user.is_authenticated and not user.is_company %}
+                <form action="{% url 'tenders:toggle_favorite' tender.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn {% if tender in user.favorite_tenders.all %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                        <i class="fas fa-heart"></i>
+                        {% if tender in user.favorite_tenders.all %}
+                            Remove from Favorites
+                        {% else %}
+                            Add to Favorites
+                        {% endif %}
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <h5>Description</h5>
+                    <p>{{ tender.description }}</p>
+
+                    <h5>Scope of Work</h5>
+                    <p>{{ tender.scope }}</p>
+
+                    <h5>Requirements</h5>
+                    <ul>
+                        {% for req in tender.requirements|default:""|split:"
+" %}
+                            {% if req|strip %}
+                                <li>{{ req|strip }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Tender Details</h5>
+                            <table class="table">
+                                <tr>
+                                    <th>Reference ID</th>
+                                    <td>{{ tender.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Type</th>
+                                    <td>{{ tender.type }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Category</th>
+                                    <td>{{ tender.category|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Deadline</th>
+                                    <td>{{ tender.deadline|date:"Y-m-d" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Value</th>
+                                    <td>${{ tender.value|floatformat:2|default:"0.00" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Location</th>
+                                    <td>{{ tender.location|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Published by</th>
+                                    <td>{{ tender.author.company_name|default:tender.author.username }}</td>
+                                </tr>
+                            </table>
+
+                            <a href="{% url 'tenders:tender_detail' tender.id %}" class="btn btn-primary w-100 mb-2">Apply Now</a>
+                            {% if tender.documents %}
+                            <a href="{{ tender.documents.url }}" class="btn btn-outline-primary w-100">Download Documents</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

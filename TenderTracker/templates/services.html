@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Our Services{% endblock %}
+
+{% block content %}
+<style>
+    h1 {
+        color:white;
+    }
+</style>
+<div class="container py-5">
+    <h1 class="text-center mb-5">Our Services</h1>
+    
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-search fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title text-center">Tender Search & Monitoring</h5>
+                    <p class="card-text">
+                        Access our comprehensive database of tenders from various sectors and receive real-time notifications for relevant opportunities.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-file-signature fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title text-center">Bid Preparation Support</h5>
+                    <p class="card-text">
+                        Get expert assistance in preparing winning bid documents and proposals that meet all requirements.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-chart-line fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title text-center">Market Analysis</h5>
+                    <p class="card-text">
+                        Stay informed with detailed market insights and competitor analysis to make strategic bidding decisions.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,467 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TenderTide - {% block title %}{% endblock %}</title>
+    
+    
+    <!-- Bootstrap & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
+
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <style>
+        /* 3D Background */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            z-index: -1;
+        }
+
+        /* Navbar Animation */
+        .navbar {
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .navbar:hover {
+            transform: scale(1.02);
+        }
+
+        /* Button Hover */
+        .btn-primary, .btn-warning {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .btn-primary:hover, .btn-warning:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 3D Particles Background -->
+    <div id="particles-js"></div>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'tenders:home' %}">
+                <span class="text-primary">TENDER</span><span class="text-warning">TIDE</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'tenders:home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'tenders:about' %}">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'tenders:tender_list' %}">Tenders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'tenders:services' %}">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'tenders:news' %}">Business News</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'tenders:contact' %}">Contact Us</a></li>
+
+                    {% if user.is_authenticated and user.is_company %}
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-warning text-dark" href="{% url 'tenders:create_tender' %}">
+                            <i class="fas fa-plus"></i> Publish New Tender
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarProfileDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle"></i> {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="fas fa-user"></i> My Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accounts:login' %}">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary" href="{% url 'accounts:register' %}">
+                                <i class="fas fa-user-plus"></i> Create Account
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    <!-- Floating Chatbot -->
+<div id="chatbox" class="chatbox">
+    <div id="chat-header" class="chat-header">
+        <h5>Chat with Chitragupt</h5>
+        <button id="minimizeButton" onclick="toggleChatbox()">-</button>
+    </div>
+    <div id="chatlogs" class="chat-messages"></div>
+    <div class="chat-input">
+        <input type="text" id="user_message" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+<div id="chat-icon" class="chat-icon">💬</div>
+
+<!-- Chatbot Styles -->
+<style>
+    .chatbox {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 350px;
+        height: 450px;
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(106, 17, 203, 0.7);
+        display: none;
+        flex-direction: column;
+        font-family: 'Arial', sans-serif;
+        transition: all 0.3s ease-in-out;
+        animation: float 2s infinite ease-in-out, rainbowGlow 2s infinite alternate;
+    }
+
+    .chat-header {
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        cursor: grab;
+    }
+
+    .chat-messages {
+        flex-grow: 1;
+        padding: 10px;
+        overflow-y: auto;
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .chat-input {
+        display: flex;
+        padding: 10px;
+    }
+
+    .chat-input input {
+        flex-grow: 1;
+        padding: 8px;
+        border-radius: 6px;
+        border: none;
+    }
+
+    .chat-input button {
+        padding: 8px 12px;
+        background: #2575fc;
+        border: none;
+        color: white;
+        cursor: pointer;
+        border-radius: 6px;
+    }
+
+    .chat-icon {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        box-shadow: 0 0 15px rgba(106, 17, 203, 0.6);
+        cursor: pointer;
+        font-size: 24px;
+        animation: float 2s infinite ease-in-out, rainbowGlow 2s infinite alternate;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+
+    @keyframes rainbowGlow {
+        0% { box-shadow: 0 0 10px #ff0000; }
+        20% { box-shadow: 0 0 10px #ff7f00; }
+        40% { box-shadow: 0 0 10px #ffff00; }
+        60% { box-shadow: 0 0 10px #00ff00; }
+        80% { box-shadow: 0 0 10px #0000ff; }
+        100% { box-shadow: 0 0 10px #8b00ff; }
+    }
+</style>
+
+<!-- Chatbot Script -->
+<script>
+    let isDragging = false;
+    let isIconDragging = false;
+    let timeout;
+
+    function toggleChatbox() {
+        let chatbox = document.getElementById('chatbox');
+        let chatIcon = document.getElementById('chat-icon');
+
+        if (!isDragging) { // Prevents accidental toggling while dragging
+            if (chatbox.style.display === 'none' || chatbox.style.display === '') {
+                chatbox.style.display = 'flex';
+                chatIcon.style.display = 'none';
+            } else {
+                chatbox.style.display = 'none';
+                chatIcon.style.display = 'flex';
+            }
+        }
+    }
+
+    {% comment %} function sendMessage() {
+        let userMessageInput = document.getElementById('user_message');
+        let chatlogs = document.getElementById('chatlogs');
+        let userMessage = userMessageInput.value;
+
+        if (userMessage) {
+            let userMessageElement = document.createElement('div');
+            userMessageElement.textContent = "You: " + userMessage;
+            userMessageElement.style.backgroundColor = "#2575fc";
+            userMessageElement.style.color = "#fff";
+            userMessageElement.style.padding = "10px";
+            userMessageElement.style.margin = "5px 0";
+            userMessageElement.style.borderRadius = "8px";
+            userMessageElement.style.alignSelf = "flex-end";
+            chatlogs.appendChild(userMessageElement);
+
+            userMessageInput.value = '';
+            chatlogs.scrollTop = chatlogs.scrollHeight;
+        }
+    } {% endcomment %}
+
+
+
+
+
+    function sendMessage() {
+        let userMessageInput = document.getElementById('user_message');
+        let chatlogs = document.getElementById('chatlogs');
+        let userMessage = userMessageInput.value;
+    
+        if (userMessage) {
+            // Display user message
+            let userMessageElement = document.createElement('div');
+            userMessageElement.textContent = "You: " + userMessage;
+            userMessageElement.style.backgroundColor = "#2575fc";
+            userMessageElement.style.color = "#fff";
+            userMessageElement.style.padding = "10px";
+            userMessageElement.style.margin = "5px 0";
+            userMessageElement.style.borderRadius = "8px";
+            userMessageElement.style.alignSelf = "flex-end";
+            chatlogs.appendChild(userMessageElement);
+    
+            // Clear input
+            userMessageInput.value = '';
+            chatlogs.scrollTop = chatlogs.scrollHeight;
+    
+            // 🔥 Send message to backend using fetch
+            fetch('/chatbot-api/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),  // Django needs CSRF token
+                },
+                body: JSON.stringify({ message: userMessage })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Network response was not ok");
+                return response.json();
+            })
+            .then(data => {
+                let botReply = data.reply || "No response from bot.";
+    
+                let botMessageElement = document.createElement('div');
+                botMessageElement.textContent = "Bot: " + botReply;
+                botMessageElement.style.backgroundColor = "#ffffff";
+                botMessageElement.style.color = "#000";
+                botMessageElement.style.padding = "10px";
+                botMessageElement.style.margin = "5px 0";
+                botMessageElement.style.borderRadius = "8px";
+                botMessageElement.style.alignSelf = "flex-start";
+                chatlogs.appendChild(botMessageElement);
+                chatlogs.scrollTop = chatlogs.scrollHeight;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        }
+    }
+    
+    // 📌 Function to get CSRF token from cookie
+    function getCSRFToken() {
+        let cookieValue = null;
+        let cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            if (cookie.startsWith('csrftoken=')) {
+                cookieValue = cookie.substring('csrftoken='.length);
+                break;
+            }
+        }
+        return cookieValue;
+    }
+    
+    // 🧠 Listen for Enter key on the input box
+    document.getElementById('user_message').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();  // Prevent default form submission or newline
+            sendMessage();           // Send the message
+        }
+    });
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Dragging Chatbox
+    let chatbox = document.getElementById("chatbox");
+    let chatHeader = document.getElementById("chat-header");
+
+    chatHeader.addEventListener("mousedown", function (e) {
+        isDragging = true;
+        let offsetX = e.clientX - chatbox.getBoundingClientRect().left;
+        let offsetY = e.clientY - chatbox.getBoundingClientRect().top;
+
+        function moveChatbox(e) {
+            chatbox.style.left = `${e.clientX - offsetX}px`;
+            chatbox.style.top = `${e.clientY - offsetY}px`;
+        }
+
+        function stopDragging() {
+            isDragging = false;
+            document.removeEventListener("mousemove", moveChatbox);
+            document.removeEventListener("mouseup", stopDragging);
+        }
+
+        document.addEventListener("mousemove", moveChatbox);
+        document.addEventListener("mouseup", stopDragging);
+    });
+
+    // Single Click = Open Chat, Double Click = Drag Chat Icon
+    let chatIcon = document.getElementById("chat-icon");
+
+    chatIcon.addEventListener("click", function () {
+        if (!isIconDragging) {
+            clearTimeout(timeout);
+            timeout = setTimeout(toggleChatbox, 200);
+        }
+    });
+
+    chatIcon.addEventListener("dblclick", function (e) {
+        clearTimeout(timeout); // Prevents single click execution
+        isIconDragging = true;
+        let offsetX = e.clientX - chatIcon.getBoundingClientRect().left;
+        let offsetY = e.clientY - chatIcon.getBoundingClientRect().top;
+
+        function moveChatIcon(e) {
+            chatIcon.style.left = `${e.clientX - offsetX}px`;
+            chatIcon.style.top = `${e.clientY - offsetY}px`;
+        }
+
+        function stopDragging() {
+            isIconDragging = false;
+            document.removeEventListener("mousemove", moveChatIcon);
+            document.removeEventListener("mouseup", stopDragging);
+        }
+
+        document.addEventListener("mousemove", moveChatIcon);
+        document.addEventListener("mouseup", stopDragging);
+    });
+</script>
+
+
+    <footer class="bg-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>About TenderTide</h5>
+                    <p>Your Trusted Partner in Global Tender Management and Procurement Solutions</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'tenders:about' %}">About Us</a></li>
+                        <li><a href="{% url 'tenders:contact' %}">Contact Us</a></li>
+                        <li><a href="{% url 'tenders:contact' %}">Privacy Policy</a></li>
+                        <li><a href="{% url 'tenders:services' %}">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Us</h5>
+                    <p>Email: info@tendertide.com<br>Phone: +91 7705016317</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        /* Initialize Particles.js */
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                shape: { type: "circle" },
+                opacity: { value: 0.5 },
+                size: { value: 3 },
+                move: { speed: 3 },
+            },
+            interactivity: {
+                events: {
+                    onhover: { enable: true, mode: "repulse" }
+                }
+            }
+        });
+    </script>
+
+
+
+
+</body>
+</html>

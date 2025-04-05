@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}TenderTide - Home{% endblock %}
+
+{% block content %}
+<style>
+    #welcome-text {
+        font-size: 3rem;
+        font-weight: bold;
+        text-align: center;
+        color: white; /* Set text color to white */
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* Add glow effect */
+    }
+</style>
+
+<div class="container py-4">
+    <h1 id="welcome-text">Welcome to TenderTide</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Tenders</h5>
+                    {% if recent_tenders %}
+                        {% for tender in recent_tenders %}
+                        <div class="tender-item mb-3">
+                            <h6>
+                                <a href="{{ tender.tender_link }}" target="_blank">
+                                    {{ tender.tender_title }}
+                                </a>
+                            </h6>
+                            <p><strong>Tender Number:</strong> {{ tender.tender_number }}</p>
+                        </div>
+                        {% if not forloop.last %}<hr>{% endif %}
+                        {% endfor %}
+                        <div class="text-center mt-3">
+                            <a href="{% url 'tenders:tender_list' %}" class="btn btn-primary">View All Tenders</a>
+                        </div>
+                    {% else %}
+                        <p>No recent tenders available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

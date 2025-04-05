@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Profile Information</h5>
+                    <p class="card-text">
+                        <strong>Username:</strong> {{ current_user.username }}<br>
+                        <strong>Email:</strong> {{ current_user.email }}<br>
+                        <strong>Member since:</strong> {{ current_user.date_joined|date:"Y-m-d" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <h4 class="mb-4">My Favorite Tenders</h4>
+            
+            {% if favorite_tenders %}
+                {% for tender in favorite_tenders %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'tender_detail' tender.id %}">{{ tender.title }}</a>
+                        </h5>
+                        <p class="card-text">{{ tender.description|slice:":200" }}...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Deadline: {{ tender.deadline|date:"Y-m-d" }}</small>
+                            <form action="{% url 'toggle_favorite' tender.id %}" method="POST" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-heart"></i> Remove from Favorites
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info">
+                    You haven't added any tenders to your favorites yet.
+                    {% comment %} <a href="{% url 'tender_list' %}" class="alert-link">Browse Tenders</a> {% endcomment %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

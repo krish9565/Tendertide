@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Register</h4>
+                </div>
+                <div class="card-body">
+                    {% comment %} {% with messages = get_flashed_messages() %} {% endcomment %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-danger">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% comment %} {% endwith %} {% endcomment %}
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Account Type</label>
+                            <select class="form-select" name="account_type" id="accountType" onchange="toggleCompanyField()">
+                                <option value="user">Individual User</option>
+                                <option value="company">Company</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+
+                        <div class="mb-3" id="companyNameField" style="display: none;">
+                            <label for="company_name" class="form-label">Company Name</label>
+                            <input type="text" class="form-control" id="company_name" name="company_name">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Register</button>
+                        <a href="{% url 'accounts:login' %}" class="btn btn-link">Already have an account?</a>
+
+                        {% comment %} <a href="{ % url 'login' % }" class="btn btn-link">Already have an account?</a> {% endcomment %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleCompanyField() {
+    const accountType = document.getElementById('accountType').value;
+    const companyField = document.getElementById('companyNameField');
+    companyField.style.display = accountType === 'company' ? 'block' : 'none';
+    const companyInput = document.getElementById('company_name');
+    companyInput.required = accountType === 'company';
+}
+</script>
+{% endblock %}

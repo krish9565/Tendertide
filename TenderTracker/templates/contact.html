@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-white">
+    <h2 class="text-center text-primary">Contact Us</h2>
+    <p class="text-center">We'd love to hear from you! Reach out to us for any inquiries or support.</p>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Get in Touch</h4>
+            <p><strong>Email:</strong> info@tendertide.com</p>
+            <p><strong>Phone:</strong> +91 7705016317</p>
+            <p><strong>Address:</strong> 123 Business Street, Mumbai, India</p>
+        </div>
+
+        <div class="col-md-6">
+            <h4>Send Us a Message</h4>
+            <form id="contactForm">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control text-white bg-dark" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control text-white bg-dark" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea class="form-control text-white bg-dark" id="message" name="message" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+            
+            <!-- Success Message -->
+            <div id="successMessage" class="alert alert-success mt-3 d-none">
+                Message sent successfully!
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("contactForm").addEventListener("submit", function(event) {
+        event.preventDefault();  // Prevent default form submission
+
+        var formData = new FormData(this);
+        
+        fetch("{% url 'tenders:contact' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let successMessage = document.getElementById("successMessage");
+                successMessage.classList.remove("d-none");  // Show success message
+                
+                // Hide the message after 1 second
+                setTimeout(() => {
+                    successMessage.classList.add("d-none");
+                }, 1000);
+
+                document.getElementById("contactForm").reset();  // Clear form
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+</script>
+
+{% endblock %}

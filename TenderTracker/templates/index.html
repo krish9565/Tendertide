@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-md-8 mx-auto text-center">
+                <h1 class="display-4 mb-4">Most Trusted Brand over 20 Years for Tenders, RFPs, eTendering, Procurement & Bids</h1>
+                
+                <div class="search-container bg-white p-3 rounded shadow">
+                    <form action="{{ url_for('tender_list') }}" method="GET">
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <select name="type" class="form-select">
+                                    <option value="">Global Tenders</option>
+                                    <option value="government">Government</option>
+                                    <option value="private">Private</option>
+                                    <option value="international">International</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" name="q" class="form-control" placeholder="Free text search">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="specific_search" id="specificSearch">
+                                <label class="form-check-label" for="specificSearch">
+                                    Specific Search
+                                </label>
+                            </div>
+                            <a href="{{ url_for('advanced_search') }}" class="btn btn-warning mt-2">ADVANCED SEARCH</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="features-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Latest Tenders</h5>
+                        <p class="card-text">Access the most recent tender opportunities across various sectors.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">eProcurement Solutions</h5>
+                        <p class="card-text">Complete e-tendering and procurement management solutions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Bid Management</h5>
+                        <p class="card-text">Professional services for bid preparation and management.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

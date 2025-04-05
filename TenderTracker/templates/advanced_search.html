@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Advanced Search{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Advanced Search</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <form action="{{ url_for('tender_list') }}" method="GET">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Keywords</label>
+                        <input type="text" name="q" class="form-control" placeholder="Enter keywords">
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label">Tender Type</label>
+                        <select name="type" class="form-select">
+                            <option value="">All Types</option>
+                            <option value="government">Government</option>
+                            <option value="private">Private</option>
+                            <option value="international">International</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            <option value="construction">Construction</option>
+                            <option value="it">Information Technology</option>
+                            <option value="healthcare">Healthcare</option>
+                            <option value="education">Education</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label">Location</label>
+                        <input type="text" name="location" class="form-control" placeholder="Enter location">
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label">Deadline From</label>
+                        <input type="date" name="deadline_from" class="form-control">
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label">Deadline To</label>
+                        <input type="date" name="deadline_to" class="form-control">
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label">Value Range</label>
+                        <select name="value_range" class="form-select">
+                            <option value="">Any Value</option>
+                            <option value="0-100000">Up to $100,000</option>
+                            <option value="100000-500000">$100,000 - $500,000</option>
+                            <option value="500000-1000000">$500,000 - $1,000,000</option>
+                            <option value="1000000+">Above $1,000,000</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
